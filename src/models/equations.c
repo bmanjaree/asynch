@@ -1787,7 +1787,7 @@ void dam_model255(const double * const y_i, unsigned int num_dof, const double *
 
         q = y_i[0];
         ans[0] = -q ;
-        for (i = 0; i<num_parents; i++)
+        for (int i = 0; i<num_parents; i++)
             ans[0] += y_p[i * dim];
         ans[0] = invtau * pow(q, lambda_1) * ans[0];
     }
