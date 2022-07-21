@@ -1728,7 +1728,7 @@ void model255(double t, const double * const y_i, unsigned int dim, const double
     double Corr = s_p + s_t / S_L + s_s / (h_b - S_L);
     if (e_pot > 0.0 && Corr > 1e-12)
     {
-        e_p = s_p * 1e3 * e_pot / Corr;
+        e_p = s_p * e_pot / Corr;
         e_t = s_t / S_L * e_pot / Corr;
         e_s = s_s / (h_b - S_L) * e_pot / Corr;
     }
@@ -1781,9 +1781,15 @@ void dam_model255(const double * const y_i, unsigned int num_dof, const double *
                                     //Find the discharge in [m^3/s]
     if (state == -1)
     {
-        S = (y_i[1] < 0.0) ? 0.0 : y_i[1];
+       // S = (y_i[1] < 0.0) ? 0.0 : y_i[1];
         //ans[0] = invtau/60.0*pow(S,1.0/(1.0-lambda_1));
-        ans[0] = pow((1.0 - lambda_1)*invtau / 60.0 * S, 1.0 / (1.0 - lambda_1));
+        //ans[0] = pow((1.0 - lambda_1)*invtau / 60.0 * S, 1.0 / (1.0 - lambda_1));
+
+        q = y_i[0];
+        ans[0] = -q ;
+        for (i = 0; i<num_parents; i++)
+            ans[0] += y_p[i * dim];
+        ans[0] = invtau * pow(q, lambda_1) * ans[0];
     }
     else if (state == (int)qvs->n_values - 1)
     {
