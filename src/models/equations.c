@@ -1750,6 +1750,12 @@ void model255(double t, const double * const y_i, unsigned int dim, const double
 
     //Discharge
     dam_model255(y_i, dim, global_params, params, qvs, state, user, ans);	//ans is used for convenience !!!! Is q available in y_i? !!!!
+    if(state==-1){
+        ans[0] = -q +(q_pl + q_sl) * c_2;
+        for (int i = 0; i<num_parents; i++)
+            ans[0] += y_p[i * dim];
+        ans[0] = invtau * pow(q, lambda_1) * ans[0];
+    }
     double qm = ans[0] * 60.0;
 
     //Storage
@@ -1785,11 +1791,8 @@ void dam_model255(const double * const y_i, unsigned int num_dof, const double *
         //ans[0] = invtau/60.0*pow(S,1.0/(1.0-lambda_1));
         //ans[0] = pow((1.0 - lambda_1)*invtau / 60.0 * S, 1.0 / (1.0 - lambda_1));
 
-        q = y_i[0];
-        ans[0] = -q ;
-        for (int i = 0; i<num_parents; i++)
-            ans[0] += y_p[i * dim];
-        ans[0] = invtau * pow(q, lambda_1) * ans[0];
+        //double q = y_i[0];
+        
     }
     else if (state == (int)qvs->n_values - 1)
     {
