@@ -1713,6 +1713,8 @@ void model255(double t, const double * const y_i, unsigned int dim, const double
     double k_i = params[13];	//[1/min]
     double c_1 = params[14];
     double c_2 = params[15];
+    double invtau = params[11];	//[1/min]
+
     double rainfall = forcing_values[0] * c_1;
     double snowmelt = forcing_values[3] * (0.001)/60; //mm/hour to m/min
     rainfall+= snowmelt;
