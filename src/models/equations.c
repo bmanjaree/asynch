@@ -1785,7 +1785,7 @@ void dam_model255(const double * const y_i, unsigned int num_dof, const double *
     if (state == -1)
     {
         S = (y_i[1] < 0.0) ? 0.0 : y_i[1];
-        ßans[0] = invtau/60.0*pow(S,1.0/(1.0-lambda_1));
+        ans[0] = invtau/60.0*pow(S,1.0/(1.0-lambda_1));
         //ans[0] = pow((1.0 - lambda_1)*invtau / 60.0 * S, 1.0 / (1.0 - lambda_1));
         
         
