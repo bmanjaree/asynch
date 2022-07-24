@@ -35,3 +35,16 @@ int dam_check_qvs(
 
     return i;
 }
+
+int dam_check_402(double *y, unsigned int num_dof,
+    const double * const params, unsigned int num_params,
+    const double * const global_params, unsigned int num_global_params,
+    QVSData *qvs,
+    bool has_dam,
+    void *user)
+    {
+        int out =0;
+        if(has_dam)
+            out=1;
+        return out;
+    }

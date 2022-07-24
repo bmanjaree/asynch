@@ -1161,7 +1161,7 @@ void InitRoutines(
         link->check_state = &dam_check;
         link->check_consistency = &CheckConsistency_Nonzero_4States;
     }
-    else if (model_uid == 22)
+    else if (model_uid == 22)d
     {
         link->dim = 4;
         link->no_ini_start = 2;
@@ -1982,10 +1982,10 @@ void InitRoutines(
 		link->check_state = NULL;
 		link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
 	} 
-	else if (model_uid == 402) //tetis03
-				{
-			link->dim = 9;
-			link->no_ini_start = 4;
+	else if (model_uid == 402) //tetis with dams
+		{
+			link->dim = 7;
+			link->no_ini_start =  link->dim;
 			link->diff_start = 0;
 
 			link->num_dense = 2;
@@ -1998,8 +1998,9 @@ void InitRoutines(
 				link->differential = &Tetis03_Reservoirs;
 				link->solver = &ForcedSolutionSolver;
 			} else
-				link->differential = &Tetis03;
-			link->algebraic = dam_Tetis03;
+				link->differential = &model402;
+			//link->algebraic = dam_Tetis03;
+            link->algebraic = NULL;
 			link->check_state = NULL;
 			link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
 		}
@@ -3794,44 +3795,16 @@ int ReadInitData(
 
 	    }
 	else if (model_uid == 402)        //tetis03
-			{
-		//For this model_uid, the extra states need to be set (4,5,6,7)
-		y_0[4] = 0.0;
-		y_0[5] = 0.0;
-		y_0[6] = 0.0;
-		y_0[7] = y_0[0];
-		//y_0[8] = 0.0;
-
-//Discharges are initially read into y_0[1] when no dam is present. So y_0[1] is copied to y_0[0],
-//then the corresponding storage is moved into y_0[1]. When a dam is present, y_0[1] will have the storage.
-//So the discharge can be calculated and stored into y_0[0].
-		if (dam) {
-			unsigned int i;
-			y_0[0] = y_0[8];
-			for (i = 0; i < qvs->n_values - 1; i++)
-				if (qvs->points[i][1] <= y_0[0]
-						&& y_0[0] < qvs->points[i + 1][1])
-					break;
-			if (i == qvs->n_values - 1) {
-				y_0[0] = qvs->points[i][1];
-				y_0[8] = qvs->points[i][0];
-			} else {
-				double q2 = qvs->points[i + 1][1];
-				double q1 = qvs->points[i][1];
-				double S2 = qvs->points[i + 1][0];
-				double S1 = qvs->points[i][0];
-				y_0[8] = (S2 - S1) / (q2 - q1) * (y_0[0] - q1) + S1;
-			}
-			return i;
-		} else {
-			double lambda_1 = global_params[1];
-			double tau_in_secs = 1.0 / params[10] * 60.0;
-			y_0[0] = y_0[1];
-			y_0[1] = tau_in_secs / (1.0 - lambda_1)
-					* pow(y_0[0], 1.0 - lambda_1);
-			return -1;
-		}
-	} else {
+		{
+            int state=0; //no dam
+            if(dam){
+                state= 1;
+                return state;
+            }
+            else
+                return state;
+	    } 
+    else {
 		//If not using algebraic variables, then everything is already set
 		return 0;
 	}

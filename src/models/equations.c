@@ -2489,14 +2489,6 @@ void model400(double t, \
         unsigned int STATE_GW = 4;
         unsigned int STATE_SNOW = 5;
 
-        #ifndef minf
-        #define minf(a,b) ((a) < (b) ? (a) : (b))
-        #endif
-
-        #ifndef maxf
-        #define maxf(a,b) ((a) > (b) ? (a) : (b))
-        #endif
-
         //INITIAL VALUES
         double h5 = y_i[STATE_SNOW];//snow storage [m]
 		double h1 = y_i[STATE_STATIC]; //static storage [m]
@@ -2771,7 +2763,7 @@ void model401(double t, \
 	    ans[STATE_DISCHARGE] = invtau * pow(q, lambda_1) * ans[STATE_DISCHARGE];    // discharge[0]
 }
 //Type 402
-void Tetis03(double t, \
+void model402(double t, \
 		const double * const y_i, \
 		unsigned int dim, \
 		const double * const y_p, \
@@ -2789,100 +2781,168 @@ void Tetis03(double t, \
 	 	unsigned short i; //auxiliary variable for loops
 	    double L = params[1];   // Length of the channel [m]
 	    double A_h = params[2]; //Area of the hillslopes [m^2]
-	    double c_1 = (0.001 / 60.0); //params[10]; //factor .converts [mm/hr] to [m/min]
+	    double c_1 = params[4]; //factor .converts [mm/hr] to [m/min]
 	    double rainfall = forcing_values[0] * c_1; //rainfall. from [mm/hr] to [m/min]
-		//double snowmelt = forcing_values[2]; //we need to put it in [m/min]
-	    double x1 = rainfall; // x1 can be rainfall + snowmelt when last available
 	    double e_pot = forcing_values[1] * (1e-3 / (30.0*24.0*60.0));//potential et[mm/month] -> [m/min]
+        double temperature = forcing_values[2]; //daily temperature in Celsius
+        double temp_thres=global_params[10]; // celsius degrees
+        double melt_factor = global_params[9] *(1/(24*60.0)) *(1/1000.0); // mm/day/degree to m/min/degree
+        double frozen_ground = forcing_values[3]; // 1 if ground is frozen, 0 if not frozen 
+        double x1 =0;
 
+        //states
+        unsigned int STATE_DISCHARGE=0;
+        unsigned int STATE_STATIC= 1;
+        unsigned int STATE_SURFACE=2;
+        unsigned int STATE_SUBSURF=3;
+        unsigned int STATE_GW = 4;
+        unsigned int STATE_SNOW = 5;
+        unsigned int STATE_DAM_STORAGE=6;
+
+        //INITIAL VALUES
+        double h5 = y_i[STATE_SNOW];//snow storage [m]
+		double h1 = y_i[STATE_STATIC]; //static storage [m]
+		double h2 = y_i[STATE_SURFACE];//water in the hillslope surface [m]
+		double h3 = y_i[STATE_SUBSURF]; //water in the gravitational storage in the upper part of soil [m]
+		double h4 = y_i[STATE_GW]; //water in the aquifer storage [m]
+	    double q = y_i[STATE_DISCHARGE];      //[m^3/s]
+        double dam_storage =y_i[STATE_DAM_STORAGE] ;//m^3
+
+        //snow storage
+        //temperature =0 is the flag for no forcing the variable. no snow process
+        if(temperature==0){
+            x1 = rainfall;
+            ans[STATE_SNOW]=0;
+        }
+        else{
+            if(temperature>=temp_thres){
+                double snowmelt = min(h5,temperature * melt_factor); // in [m]
+                ans[STATE_SNOW]=-snowmelt; //melting outs of snow storage
+                x1 = rainfall + snowmelt; // in [m]
+               // printf("temp > th: %f\n", temperature);
+               // printf("snowmelt : %f\n", snowmelt);
+            }
+            if(temperature != 0 & temperature <temp_thres){
+                ans[STATE_SNOW]=rainfall; //all precipitation is stored in the snow storage
+                x1=0;
+                //printf("temp < th: %f\n", temperature);
+            }
+        }
+        
 
 		//static storage
-		double h1 = y_i[1]; //static storage [m]
-		double Hu = params[3]; //max available storage in static tank [m]
+		double Hu = global_params[3]/1000; //max available storage in static tank [mm] to [m]
 		double x2 = max(0,x1 + h1 - Hu ); //excedance flow to the second storage [m] [m/min] check units
-		//double x2 = (x1 + h1 -Hu>0.0) ? x1 + h1 -Hu : 0.0;
+        //if ground is frozen, x1 goes directly to the surface
+        //therefore nothing is diverted to static tank
+        if(frozen_ground == 1){
+            x2 = x1;
+        }
+            
 		double d1 = x1 - x2; // the input to static tank [m/min]
 		double out1 = min(e_pot, h1); //evaporation from the static tank. it cannot evaporate more than h1 [m]
 		//double out1 = (e_pot > h1) ? e_pot : 0.0;
-		ans[1] = d1 - out1; //differential equation of static storage
+		ans[STATE_STATIC] = d1 - out1; //differential equation of static storage
 
 
 		//surface storage tank
-		double h2 = y_i[2];//water in the hillslope surface [m]
-		double infiltration = params[4]*c_1; //infiltration rate [m/min]
+		double infiltration = global_params[4]*c_1; //infiltration rate [m/min]
+         if(frozen_ground == 1){
+            infiltration = 0;
+        }
 		double x3 = min(x2, infiltration); //water that infiltrates to gravitational storage [m/min]
 		double d2 = x2 - x3; // the input to surface storage [m] check units
-		double alfa2 = params[5]; //between 0 and 1, function of slope, roughness, hill lenght.
-		double out2 = alfa2 * h2 ; //direct runoff [m/min]
-		ans[2] = d2 - out2; //differential equation of surface storage
+        double alfa2 =global_params[6]; //velocity in m/s
+        double w = alfa2 * L / A_h  * 60; // [1/min]
+        w = min(1,w); //water can take less than 1 min (dt) to leave surface
+        double out2 =0;
+        out2  = h2 * w; //direct runoff [m/min]
+		ans[STATE_SURFACE] = d2 - out2; //differential equation of surface storage
 
 
-		// gravitational storage
-		double h3 = y_i[3]; //water in the gravitational storage in the upper part of soil
-		double percolation = params[6]*c_1; // percolation rate to aquifer [m/min]
+		// SUBSURFACE storage
+		double percolation = global_params[5]*c_1; // percolation rate to aquifer [m/min]
 		double x4 = min(x3,percolation); //water that percolates to aquifer storage [m/min]
 		double d3 = x3 - x4; // input to gravitational storage [m/min]
-		double alfa3 = params[7];
-		double out3 = alfa3 * h3; //interflow [m/min]
-		ans[3] = d3 - out3; //differential equation for gravitational storage
+		double alfa3 = global_params[7]* 24*60; //residence time [days] to [min].
+        double out3=0;
+        if(alfa3>=1)
+		    out3 = h3/alfa3; //interflow [m/min]
+		ans[STATE_SUBSURF] = d3 - out3; //differential equation for gravitational storage
 
 		//aquifer storage
-		double h4 = y_i[4]; //water in the aquifer storage
-		double deepinf = 0; //water loss to deeper aquifer [m]
-		//double x5 = min(x4,deepinf);
-		double x5 = 0;
+		double x5 = 0;//water loss to deeper aquifer [m]
 		double d4 = x4 - x5;
-		double alfa4 = params[8];
-		double out4 = alfa4 * h4 ; //base flow [m/min]
-		ans[4] = d4 - out4; //differential equation for aquifer storage
+		double alfa4 = global_params[8]* 24*60; //residence time [days] to [min].
+        double out4=0;
+        if(alfa4>=1)
+		    out4 = h4/alfa4 ; //base flow [m/min]
+		ans[STATE_GW] = d4 - out4; //differential equation for aquifer storage
 
 		//channel storage
 
 		double lambda_1 = global_params[1];
-	    double invtau = params[9];// 60.0*v_0*pow(A_i, lambda_2) / ((1.0 - lambda_1)*L_i);	//[1/min]  invtau
-	    double q = y_i[0];      //[m^3/s]
-	    double sto = y_i[8]; //[m^3] for QVS
+	    double invtau = params[3];// 60.0*v_0*pow(A_i, lambda_2) / ((1.0 - lambda_1)*L_i);	//[1/min]  invtau
+	   	double c_2 = params[5];// = A_h / 60.0;	//  c_2
 
-	    double q_b = y_i[7];    //[m^3/s]
-	    double v_B = global_params[3];
-	   	double c_2 = params[10];// = A_h / 60.0;	//  c_2
+        if(state==0){ //no dams
+            ans[STATE_DISCHARGE] = -q + (out2 + out3 + out4) * c_2; //[m/min] to [m3/s]
+	        for (i = 0; i < num_parents; i++)
+	            ans[STATE_DISCHARGE] += y_p[i * dim + STATE_DISCHARGE];
+	        ans[STATE_DISCHARGE] = invtau * pow(q, lambda_1) * ans[STATE_DISCHARGE];    // discharge[0]
 
-	    //ans[0] = -q + (out2 + out3 + out4) * c_2; //[m/min] to [m3/s]
-	    //for (i = 0; i < num_parents; i++)
-	    //    ans[0] += y_p[i * dim];
-	    //ans[0] = invtau * pow(q, lambda_1) * ans[0];    // discharge[0]
+        }
+        if(state ==1){// dams
+            double dam_input = 0;//m3
+            double dam_output=0;//m3
+            
+            //inflow from upstream links
+            for (i = 0; i < num_parents; i++)
+	            dam_input += y_p[i * dim + STATE_DISCHARGE] * 60.0; //m3/s to m3
+            // storage inputs
+            dam_storage= dam_storage + dam_input;
+            //calculate dam outflow
+            dam_outflow = get_discharge_from_storage(dam_storage); //m3s-1
+            ans[STATE_DISCHARGE] = dam_outflow;
+            //storage output
+            dam_output =get_storage_from_discharge(dam_outflow);
+            dam_storage =dam_storage - dam_output;
+            ans[STATE_DAM_STORAGE] = dam_storage;
 
-	    dam_Tetis03(y_i, dim, global_params, params, qvs, state, user, ans);	//For QVS
-	    double qm = ans[0] * 60.0;
+        }
 
-	    //Storage for QVS ponds
-	    ans[8] = (out2 + out3 + out4) * A_h - qm;
-	    for (i = 0; i<num_parents; i++)
-	        ans[8] += y_p[i * dim] * 60.0;
-
-
-	   ans[7] = out4 * A_h - q_b*60.0;     // baseflow[7] //[m3/min]
-	    for (i = 0; i < num_parents; i++)
-	        ans[7] += y_p[i * dim + 7] * 60.0;
-	    ans[7] *= v_B / L; //[m3/min] to [m3/s]
-
-
-
-	    //Additional states
-	    ans[5] = forcing_values[0] * c_1;   // precip[4]
-	//    ans[5] = forcing_values[1] * c_1;   // et[5]
-	    //ans[6] = out2;                      // runoff[]
-	    ans[6] = out1;                      // et[]
+        // if (forcing_values[0]>1 && ratio<1) {
+        //     printf("time: %f\n", t);
+        //     printf(" rain in mm/hour: %f\n", forcing_values[0]);
+        //     printf(" area hill, area basin, area ratio: %f %f %f\n", A_h,A_i,ratio);
+        //     MPI_Abort(MPI_COMM_WORLD, 1);
+        // }
 }
 
-//Type 401
+double get_discharge_from_storage(double storage){
+    double coefficient = 1.0;
+    double intersect = 0.0;
+    double power = 2.0;
+    double discharge = intersect + coefficient * pow(storage,power);
+    return(discharge); 
+}
+double get_storage_from_discharge(double discharge){
+    double coefficient = 1.0;
+    double intersect = 0.0;
+    double power = 2.0;
+    double dam_outflow=0;
+    double storage = intersect + coefficient * pow(discharge,power);
+    return(storage); 
+}
+
+//Type 402
 //Contains 2 states in the channel: dischage, storage
 //Contains 3 layers on hillslope: ponded, top layer, soil
 //Order of parameters: A_i,L_i,A_h,S_h,T_L,eta,h_b,k_D,k_dry,k_i | invtau,c_1,c_2,k_2
 //The numbering is:	0   1   2   3   4   5   6   7   8     9  |   10    11  12  13
 //Order of global_params: v_0,lambda_1,lambda_2,N,phi,v_B
 //The numbering is:        0      1        2    3  4   5
-void dam_Tetis03(const double * const y_i,
+void dam_model402(const double * const y_i,
 		unsigned int num_dof,
 		const double * const global_params,
 		const double * const params,
@@ -2891,34 +2951,7 @@ void dam_Tetis03(const double * const y_i,
 		void* user,
 		double *ans)
 {
-    double q1, q2, S1, S2, S_max, q_max, S;
-
-    //Parameters
-    double lambda_1 = global_params[1];
-    double invtau = params[3];
-
-    //Find the discharge in [m^3/s]
-    if (state == -1)
-    {
-        S = (y_i[8] < 0.0) ? 0.0 : y_i[8];
-        //ans[0] = invtau/60.0*pow(S,1.0/(1.0-lambda_1));
-        ans[0] = pow((1.0 - lambda_1)*invtau / 60.0 * S, 1.0 / (1.0 - lambda_1));
-    }
-    else if (state == (int)qvs->n_values - 1)
-    {
-        S_max = qvs->points[qvs->n_values - 1][0];
-        q_max = qvs->points[qvs->n_values - 1][1];
-        ans[0] = q_max;
-    }
-    else
-    {
-        S = (y_i[8] < 0.0) ? 0.0 : y_i[8];
-        q2 = qvs->points[state + 1][1];
-        q1 = qvs->points[state][1];
-        S2 = qvs->points[state + 1][0];
-        S1 = qvs->points[state][0];
-        ans[0] = (q2 - q1) / (S2 - S1) * (S - S1) + q1;
-    }
+    
 }
 //Type 402
 void Tetis03_Reservoirs(double t, const double * const y_i, unsigned int dim, const double * const y_p, unsigned short num_parents, unsigned int max_dim, const double * const global_params, const double * const params, const double * const forcing_values, const QVSData * const qvs, int state, void* user, double *ans)
