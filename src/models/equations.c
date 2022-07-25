@@ -2938,24 +2938,7 @@ double get_storage_from_discharge(double discharge){
     return storage;
 }
 
-//Type 402
-//Contains 2 states in the channel: dischage, storage
-//Contains 3 layers on hillslope: ponded, top layer, soil
-//Order of parameters: A_i,L_i,A_h,S_h,T_L,eta,h_b,k_D,k_dry,k_i | invtau,c_1,c_2,k_2
-//The numbering is:	0   1   2   3   4   5   6   7   8     9  |   10    11  12  13
-//Order of global_params: v_0,lambda_1,lambda_2,N,phi,v_B
-//The numbering is:        0      1        2    3  4   5
-void dam_model402(const double * const y_i,
-		unsigned int num_dof,
-		const double * const global_params,
-		const double * const params,
-		const QVSData * const qvs,
-		int state,
-		void* user,
-		double *ans)
-{
-    
-}
+
 //Type 402
 void Tetis03_Reservoirs(double t, const double * const y_i, unsigned int dim, const double * const y_p, unsigned short num_parents, unsigned int max_dim, const double * const global_params, const double * const params, const double * const forcing_values, const QVSData * const qvs, int state, void* user, double *ans)
 {
