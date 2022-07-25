@@ -2907,6 +2907,7 @@ void model402(double t, \
             //storage output
             dam_output =get_storage_from_discharge(dam_outflow);
             dam_storage =dam_storage - dam_output;
+            dam_storage = max(dam_storage,0);
             ans[STATE_DAM_STORAGE] = dam_storage;
 
         }
@@ -2920,19 +2921,21 @@ void model402(double t, \
 }
 
 double get_discharge_from_storage(double storage){
-    double coefficient = 1.0;
-    double intersect = 0.0;
-    double power = 2.0;
-    double discharge = intersect + coefficient * pow(storage,power);
-    return(discharge); 
+    double discharge=0;
+    if(storage<42000)
+        discharge = 9E-7*storage + 0.2959;
+    else
+        discharge = math.pow(3E-21*storage,4.1911); 
+    return discharge;
 }
+
 double get_storage_from_discharge(double discharge){
-    double coefficient = 1.0;
-    double intersect = 0.0;
-    double power = 2.0;
-    double dam_outflow=0;
-    double storage = intersect + coefficient * pow(discharge,power);
-    return(storage); 
+    double storage=0;
+    if(discharge<0.294)
+        storage = 418.85*discharge - 1E-14;
+    else
+        storage = 29156*log(discharge) + 74908; 
+    return storage;
 }
 
 //Type 402
