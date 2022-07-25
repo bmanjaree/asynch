@@ -2896,7 +2896,7 @@ void model402(double t, \
             double dam_input = 0;//m3
             double dam_output=0;//m3
             double dam_outflow=0; //m3s-1
-            
+
             //inflow from upstream links
             for (i = 0; i < num_parents; i++)
 	            dam_input += y_p[i * dim + STATE_DISCHARGE] * 60.0; //m3/s to m3
@@ -2926,7 +2926,7 @@ double get_discharge_from_storage(double storage){
     if(storage<42000)
         discharge = 9E-7*storage + 0.2959;
     else
-        discharge = math.pow(3E-21*storage,4.1911); 
+        discharge = pow(3E-21*storage,4.1911); 
     return discharge;
 }
 
