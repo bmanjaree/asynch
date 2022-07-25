@@ -1161,7 +1161,7 @@ void InitRoutines(
         link->check_state = &dam_check;
         link->check_consistency = &CheckConsistency_Nonzero_4States;
     }
-    else if (model_uid == 22)d
+    else if (model_uid == 22)
     {
         link->dim = 4;
         link->no_ini_start = 2;
