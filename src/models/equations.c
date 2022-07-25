@@ -2938,19 +2938,22 @@ void model402(double t, \
 
 double get_discharge_from_storage(double storage){
     double discharge=0;
+    
     if(storage<125000) //discharge = 1m3s-1
-        discharge = 2.8E-5*storage;
+        //discharge = 2.8E-5*storage;
+        discharge = (1-0)/(125000-0.0)*storage;
     else
-        discharge = 1+ 8.1E-4*storage; 
+        //discharge = 1+ 8.1E-4*storage; 
+        discharge = (100-1)/(225000-125000)*(storage - 125000)+1.0;
     return discharge;
 }
 
 double get_storage_from_discharge(double discharge){
     double storage=0;
     if(discharge<1)
-        storage = (1.0/125000.0)*discharge ;
+        storage = (125000-0)/(1-0)*discharge ;
     else
-        storage = 125000 + (225000.0-125000.0)/(90.0)*discharge; 
+        storage = (225000-125000)/(100.0-1.0)*(discharge-1.0) + 125000; 
     return storage;
 }
 
