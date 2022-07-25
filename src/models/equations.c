@@ -2895,6 +2895,7 @@ void model402(double t, \
         if(state ==1){// dams
             double dam_input = 0;//m3
             double dam_output=0;//m3
+            double dam_outflow=0; //m3s-1
             
             //inflow from upstream links
             for (i = 0; i < num_parents; i++)
