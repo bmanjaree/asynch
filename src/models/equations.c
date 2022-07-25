@@ -2896,34 +2896,36 @@ void model402(double t, \
             double dam_input = 0;//m3
             double dam_output=0;//m3
             double dam_outflow=0; //m3s-1
-
+            int debug = 0;
+            if(debug)
             printf("time: %f\n", t);
             //inflow from upstream links
             for (i = 0; i < num_parents; i++)
 	            dam_input += y_p[i * dim + STATE_DISCHARGE] * 60.0; //m3/s to m3
+            if(debug)
             printf("inflow from upstream in m3: %f\n", dam_input);
             // storage inputs
-            printf("initial dam storage in m3: %f\n", dam_storage);
+            if(debug) printf("initial dam storage in m3: %f\n", dam_storage);
             dam_storage= dam_storage + dam_input;
-            printf("step1 dam storage in m3: %f\n", dam_storage);
+            if(debug) printf("step1 dam storage in m3: %f\n", dam_storage);
 
             //calculate dam outflow
             dam_outflow = get_discharge_from_storage(dam_storage); //m3s-1
-            printf("dam outflow in m3/s: %f\n", dam_outflow);
+            if(debug) printf("dam outflow in m3/s: %f\n", dam_outflow);
 
             ans[STATE_DISCHARGE] = dam_outflow;
             //storage output
             dam_output =get_storage_from_discharge(dam_outflow);
-            printf("dam output storage in m3: %f\n", dam_output);
+            if(debug) printf("dam output storage in m3: %f\n", dam_output);
 
             dam_storage =dam_storage - dam_output;
-            printf("step2 dam storage in m3: %f\n", dam_storage);
+            if(debug) printf("step2 dam storage in m3: %f\n", dam_storage);
 
             dam_storage = max(dam_storage,0);
-            printf("step3 dam storage in m3: %f\n", dam_storage);
+            if(debug) printf("step3 dam storage in m3: %f\n", dam_storage);
             ans[STATE_DAM_STORAGE] = dam_storage;
             
-            printf("\n");
+            if(debug) printf("\n");
 
             
         }
