@@ -2909,7 +2909,7 @@ void model402(double t, \
 
             //calculate dam outflow
             dam_outflow = get_discharge_from_storage(dam_storage); //m3s-1
-            printf(" dam outflow in m3/s: %f\n", dam_outflow);
+            printf("dam outflow in m3/s: %f\n", dam_outflow);
 
             ans[STATE_DISCHARGE] = dam_outflow;
             //storage output
@@ -2920,8 +2920,11 @@ void model402(double t, \
             printf("step2 dam storage in m3: %f\n", dam_storage);
 
             dam_storage = max(dam_storage,0);
+            printf("step3 dam storage in m3: %f\n", dam_storage);
             ans[STATE_DAM_STORAGE] = dam_storage;
             
+            printf("\n");
+
             
         }
 
