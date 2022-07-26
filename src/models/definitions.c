@@ -1988,20 +1988,23 @@ void InitRoutines(
 			link->no_ini_start =  link->dim;
 			link->diff_start = 0;
 
-			link->num_dense = 2;
+			link->num_dense = 1;
 			link->dense_indices = (unsigned int*) realloc(link->dense_indices,
 					link->num_dense * sizeof(unsigned int));
 			link->dense_indices[0] = 0;
-			link->dense_indices[1] = 7;
-
+			
 			if (link->has_res) {
 				link->differential = &Tetis03_Reservoirs;
 				link->solver = &ForcedSolutionSolver;
-			} else
-				link->differential = &model402;
-			//link->algebraic = dam_Tetis03;
+			} 
+            else
+            {
+                link->differential = &model402;
+                link->solver = &ExplicitRKIndex1SolverDam;;
+
+            }
             link->algebraic = NULL;
-			link->check_state = NULL;
+			link->check_state = &dam_check_402;
 			link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
 		}
 	//else if (model_uid == 300)
@@ -3796,13 +3799,13 @@ int ReadInitData(
 	    }
 	else if (model_uid == 402)        //tetis03
 		{
-            int state=0; //no dam
-            if(dam){
-                state= 1;
-                return state;
-            }
-            else
-                return state;
+            // int state=0; //no dam
+            // if(dam){
+            //     state= 1;
+            //     return state;
+            // }
+            // else
+            //     return state;
 	    } 
     else {
 		//If not using algebraic variables, then everything is already set

@@ -2914,6 +2914,7 @@ void model402(double t, \
             if(debug) printf("dam outflow in m3/s: %f\n", dam_outflow);
 
             ans[STATE_DISCHARGE] = dam_outflow;
+            
             //storage output
             dam_output =get_storage_from_discharge(dam_outflow);
             if(debug) printf("dam output storage in m3: %f\n", dam_output);
