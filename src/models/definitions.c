@@ -3169,7 +3169,7 @@ void Precalculations(
 
 		 iparams[0] = link_i->location;
 		 */
-	} else if (model_uid == 400) //tetis01 model
+	} else if (model_uid == 400 || model_uid == 402) //tetis01 model
 		{
 		double* vals = params;
 		double A_i = params[0]; //upstream area of the hillslope
@@ -3191,7 +3191,7 @@ void Precalculations(
 		vals[5] = A_h / 60.0;	//  c_2
 
 
-	} else if (model_uid == 401 || model_uid == 402) //tetis02 & 03 model
+	} else if (model_uid == 401 ) //tetis02 & 03 model
 			{
 		double* vals = params;
 		double A_i = params[0]; //upstream area of the hillslope
@@ -3800,13 +3800,13 @@ int ReadInitData(
 	    }
 	else if (model_uid == 402)        //tetis03
 		{
-            int state=0; //no dam
-            if(dam){
-                state= 1;
-                return state;
-            }
-            else
-                return state;
+            // int state=0; //no dam
+            // if(dam){
+            //     state= 1;
+            //     return state;
+            // }
+            // else
+            //     return state;
 	    } 
     else {
 		//If not using algebraic variables, then everything is already set
