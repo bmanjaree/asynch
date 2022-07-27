@@ -2896,14 +2896,12 @@ void model402(double t, \
             double dam_input = 0;//m3
             double dam_output=0;//m3
             double dam_outflow=0; //m3s-1
-            int debug = 0;
-            if(debug)
-            printf("time: %f\n", t);
+            int debug = 1;
+            if(debug) printf("time: %f\n", t);
             //inflow from upstream links
             for (i = 0; i < num_parents; i++)
 	            dam_input += y_p[i * dim + STATE_DISCHARGE] * 60.0; //m3/s to m3
-            if(debug)
-            printf("inflow from upstream in m3: %f\n", dam_input);
+            if(debug) printf("inflow from upstream in m3: %f\n", dam_input);
             // storage inputs
             if(debug) printf("initial dam storage in m3: %f\n", dam_storage);
             dam_storage= dam_storage + dam_input;
