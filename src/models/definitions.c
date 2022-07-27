@@ -3800,13 +3800,13 @@ int ReadInitData(
 	    }
 	else if (model_uid == 402)        //tetis03
 		{
-            // int state=0; //no dam
-            // if(dam){
-            //     state= 1;
-            //     return state;
-            // }
-            // else
-            //     return state;
+            int state=0; //no dam
+            if(dam){
+                state= 1;
+                return state;
+            }
+            else
+                return state;
 	    } 
     else {
 		//If not using algebraic variables, then everything is already set
