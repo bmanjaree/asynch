@@ -2885,13 +2885,13 @@ void model402(double t, \
 	    double invtau = params[3];// 60.0*v_0*pow(A_i, lambda_2) / ((1.0 - lambda_1)*L_i);	//[1/min]  invtau
 	   	double c_2 = params[5];// = A_h / 60.0;	//  c_2
 
-        //if(state==0){ //no dams
+        if(state==0){ //no dams
             ans[STATE_DISCHARGE] = -q + (out2 + out3 + out4) * c_2; //[m/min] to [m3/s]
 	        for (i = 0; i < num_parents; i++)
 	            ans[STATE_DISCHARGE] += y_p[i * dim + STATE_DISCHARGE];
 	        ans[STATE_DISCHARGE] = invtau * pow(q, lambda_1) * ans[STATE_DISCHARGE];    // discharge[0]
 
-        //}
+        }
         // if(state ==1){// dams
         //     double dam_input = 0;//m3
         //     double dam_output=0;//m3
