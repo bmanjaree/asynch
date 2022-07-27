@@ -2000,11 +2000,12 @@ void InitRoutines(
             else
             {
                 link->differential = &model402;
-                link->solver = &ExplicitRKIndex1SolverDam;;
+                //link->solver = &ExplicitRKIndex1SolverDam;;
 
             }
             link->algebraic = NULL;
-			link->check_state = &dam_check_402;
+			//link->check_state = &dam_check_402;
+            link->check_state = NULL;
 			link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
 		}
 	//else if (model_uid == 300)
