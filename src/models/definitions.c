@@ -3807,7 +3807,26 @@ int ReadInitData(
             }
             else
                 return state;
-	    } 
+	    }
+    else if (model_uid == 403)        //tetis03
+		{
+            int state=0; //no dam
+            if(dam){
+                unsigned int STATE_DAM_STORAGE=6;//as in model 403
+                double dam_storage = y_0[STATE_DAM_STORAGE];
+                for (int i = 0; i < qvs->n_values - 1; i++){
+				    //if (qvs->points[i][1] <= y_0[0]
+					//	&& y_0[0] < qvs->points[i + 1][1])
+                    if (qvs->points[i][0] <= dam_storage
+						&& dam_storage < qvs->points[i + 1][0])    
+					break;
+                }
+                state= i;
+                return state;
+            }
+            else
+                return state;
+	    }     
     else {
 		//If not using algebraic variables, then everything is already set
 		return 0;
