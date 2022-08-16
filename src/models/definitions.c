@@ -767,7 +767,7 @@ case 20:	num_global_params = 9;
 		globals->min_error_tolerances = 10;  //as many as states
 		break;
 		//--------------------------------------------------------------------------------------------
-	case 402://tetis03
+	case 402://tetis with single function for dams
 		num_global_params = 11;
 		globals->uses_dam = 1;
 		globals->num_params = 6;
@@ -780,6 +780,20 @@ case 20:	num_global_params = 9;
 		globals->min_error_tolerances = 7;//as many as states:static,surface,subsurf,gw,channel,snow,damstorage
 		break;
 		//--------------------------------------------------------------------------------------------
+    case 403://tetis with individual dams
+		num_global_params = 11;
+		globals->uses_dam = 1;
+		globals->num_params = 6;
+		globals->dam_params_size = 0;
+		globals->area_idx = 0;
+		globals->areah_idx = 2;
+		globals->num_disk_params = 3;
+		globals->convertarea_flag = 0;
+		globals->num_forcings = 5;
+		globals->min_error_tolerances = 7;//as many as states:static,surface,subsurf,gw,channel,snow,damstorage
+		break;
+//--------------------------------------------------------------------------------------------
+
 	case 2000:
 		num_global_params = 6;
 		globals->uses_dam = 0;
@@ -962,7 +976,7 @@ void ConvertParams(
     else if (model_uid == 249 || model_uid == 251 || model_uid == 252 || model_uid == 253 || 
     model_uid == 254 || model_uid == 255 || model_uid == 256 || model_uid == 257 || model_uid == 258 ||
      model_uid == 259 || model_uid == 260 || model_uid == 261 || model_uid == 262 || model_uid == 263 || 
-     model_uid == 264 || model_uid==400 || model_uid==401 || model_uid==402)
+     model_uid == 264 || model_uid==400 || model_uid==401 || model_uid==402|| model_uid=403)
     {
         params[1] *= 1000;		//L_h: km -> m
         params[2] *= 1e6;		//A_h: km^2 -> m^2
@@ -1982,7 +1996,7 @@ void InitRoutines(
 		link->check_state = NULL;
 		link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
 	} 
-	else if (model_uid == 402) //tetis with dams
+	else if (model_uid == 402) //tetis with simplified function for dams 
 		{
 			link->dim = 7;// states:static,surface,subsurf,gw,channel,snow,damstorage
 			link->no_ini_start =  link->dim;
@@ -2008,6 +2022,32 @@ void InitRoutines(
             link->check_state = NULL;
 			link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
 		}
+    else if (model_uid == 403) //tetis with individual  dams 
+		{
+			link->dim = 7;// states:static,surface,subsurf,gw,channel,snow,damstorage
+			link->no_ini_start =  link->dim;
+			link->diff_start = 0;
+
+			link->num_dense = 1;
+			link->dense_indices = (unsigned int*) realloc(link->dense_indices,
+					link->num_dense * sizeof(unsigned int));
+			link->dense_indices[0] = 0;
+			
+			if (link->has_res) {
+				link->differential = &Tetis03_Reservoirs;
+				link->solver = &ForcedSolutionSolver;
+			} 
+            else
+            {
+                link->differential = &model403;
+                //link->solver = &ExplicitRKIndex1SolverDam;;
+
+            }
+            link->algebraic = NULL;
+			//link->check_state = &dam_check_402;
+            link->check_state = NULL;
+			link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
+		}    
 	//else if (model_uid == 300)
 	//{
 	//    link->dim = 2;
@@ -3169,7 +3209,7 @@ void Precalculations(
 
 		 iparams[0] = link_i->location;
 		 */
-	} else if (model_uid == 400 || model_uid == 402) //tetis01 model
+	} else if (model_uid == 400 || model_uid == 402 || model_uid==403) //tetis01 model
 		{
 		double* vals = params;
 		double A_i = params[0]; //upstream area of the hillslope
@@ -3814,7 +3854,8 @@ int ReadInitData(
             if(dam){
                 unsigned int STATE_DAM_STORAGE=6;//as in model 403
                 double dam_storage = y_0[STATE_DAM_STORAGE];
-                for (int i = 0; i < qvs->n_values - 1; i++){
+                int i;
+                for (i = 0; i < qvs->n_values - 1; i++){
 				    //if (qvs->points[i][1] <= y_0[0]
 					//	&& y_0[0] < qvs->points[i + 1][1])
                     if (qvs->points[i][0] <= dam_storage
