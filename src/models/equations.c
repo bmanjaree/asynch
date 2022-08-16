@@ -3108,19 +3108,19 @@ void model403(double t, \
             if (state == (int)qvs->n_values - 1)
             {
                 //S_max = qvs->points[qvs->n_values - 1][0];
-                q_max = qvs->points[qvs->n_values - 1][1];
+                double q_max = qvs->points[qvs->n_values - 1][1];
                 dam_outflow = q_max;//m3s-1
                 //ans[0] = dam_outflow;
             }
             else
             {
                 //S = (y_i[1] < 0.0) ? 0.0 : y_i[1];
-                S = (dam_storage + dam_input < 0.0) ? 0.0 : dam_storage + dam_input;
+                double S = (dam_storage + dam_input < 0.0) ? 0.0 : dam_storage + dam_input;
                 
-                q2 = qvs->points[state + 1][1];
-                q1 = qvs->points[state][1];
-                S2 = qvs->points[state + 1][0];
-                S1 = qvs->points[state][0];
+                double q2 = qvs->points[state + 1][1];
+                double q1 = qvs->points[state][1];
+                double S2 = qvs->points[state + 1][0];
+                double S1 = qvs->points[state][0];
                 //ans[0] = (q2 - q1) / (S2 - S1) * (S - S1) + q1;
                 dam_outflow = (q2 - q1) / (S2 - S1) * (S - S1) + q1;//m3s-1
                 
