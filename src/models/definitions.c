@@ -3853,24 +3853,11 @@ int ReadInitData(
             //printf("model403 state calc\n");
 
             //state=0; //no dam
-            int debug =1;
             int state = 0;
             if(dam){
                 state=1;
                 return state;
-                unsigned int STATE_DAM_STORAGE=6;//as in model 403
-                double dam_storage = y_0[STATE_DAM_STORAGE];
-                int ii;
-                if(debug)printf("model403 state calc, dam storage: %f\n", dam_storage);
-
-                
-                if(debug)printf("model403 state calc, iteration: %u\n", ii);
-
-                state= ii;
-                if(debug)printf("model403 state calc, state: %u\n", state);
-
-                return state;
-            }
+                }
             else
                 return state; //no dam
 	    }     
