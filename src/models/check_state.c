@@ -49,7 +49,7 @@ int dam_check_qvs_403(double *y, unsigned int num_dof,
     if(debug) printf("storage in dam_check_qvs_403 : %f\n", S);
 
     if (!has_dam)
-        return 0;
+        return -1;
 
     iterations = qvs->n_values - 1;
     for (i = 0; i<iterations; i++)
