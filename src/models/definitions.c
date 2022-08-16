@@ -3850,7 +3850,7 @@ int ReadInitData(
 	    }
     else if (model_uid == 403)        //tetis03
 		{
-            int state=0; //no dam
+            state=0; //no dam
             if(dam){
                 unsigned int STATE_DAM_STORAGE=6;//as in model 403
                 double dam_storage = y_0[STATE_DAM_STORAGE];

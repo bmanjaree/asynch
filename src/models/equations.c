@@ -3093,7 +3093,7 @@ void model403(double t, \
             double dam_input = 0;//m3
             double dam_output=0;//m3
             double dam_outflow=0; //m3s-1
-            int debug = 0;
+            int debug = 1;
             
             if(debug) printf("time: %f\n", t);
             //inflow from upstream links
