@@ -3089,7 +3089,7 @@ void model403(double t, \
 
         }
         //state is the array index corresponding to the current storage in the qvs 
-        if(state =-1){// dams
+        if(state =! -1){// dams
             double dam_input = 0;//m3
             double dam_output=0;//m3
             double dam_outflow=0; //m3s-1
@@ -3105,11 +3105,11 @@ void model403(double t, \
             //dam_storage= dam_storage + dam_input;
             if(debug) printf("step1 dam storage in m3: %f\n", dam_storage + dam_input);
 
-            if(debug) printf("state: %f\n", state);
+            if(debug) printf("state: %u\n", state);
 
             if (state == (int)qvs->n_values - 1)
             {
-                if(debug) printf("state eq qvs_nvalues: %f\n", state);
+                if(debug) printf("state eq qvs_nvalues: %u\n", state);
                 //S_max = qvs->points[qvs->n_values - 1][0];
                 double q_max = qvs->points[qvs->n_values - 1][1];
                 if(debug) printf("qmax : %f\n", q_max);
