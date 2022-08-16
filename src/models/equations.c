@@ -3082,7 +3082,7 @@ void model403(double t, \
 	   	double c_2 = params[5];// = A_h / 60.0;	//  c_2
 
         //printf("state: %d\n", state);
-        if(state == -1){ //no dams
+        if(state == 0){ //no dams
             ans[STATE_DISCHARGE] = -q + (out2 + out3 + out4) * c_2; //[m/min] to [m3/s]
 	        for (i = 0; i < num_parents; i++)
 	            ans[STATE_DISCHARGE] += y_p[i * dim + STATE_DISCHARGE];
@@ -3090,7 +3090,7 @@ void model403(double t, \
 
         }
         //state is the array index corresponding to the current storage in the qvs 
-        if(state =! -1){// dams
+        if(state == 1 ){// dams
             printf("state: %d\n", state);
 
             double dam_input = 0;//m3
@@ -3108,30 +3108,37 @@ void model403(double t, \
             //dam_storage= dam_storage + dam_input;
             if(debug) printf("step1 dam storage in m3: %f\n", dam_storage + dam_input);
 
-            if(debug) printf("state: %u\n", state);
-
-            if (state == (int)qvs->n_values - 1)
+            //if(debug) printf("state: %u\n", state);
+            unsigned int max_storage_pond_index = (int)qvs->n_values - 1
+            double max_storage_pond = qvs->points[max_storage_pond_index][0]
+            if (dam_storage + dam_input >= max_storage_pond)
             {
-                if(debug) printf("state eq qvs_nvalues: %u\n", state);
+                if(debug) printf("storage >= max.sto.pond\n");
                 //S_max = qvs->points[qvs->n_values - 1][0];
                 double q_max = qvs->points[qvs->n_values - 1][1];
                 if(debug) printf("qmax : %f\n", q_max);
                 dam_outflow = q_max;//m3s-1
-                //ans[0] = dam_outflow;
             }
-            else
+            else if (dam_storage + dam_input < max_storage_pond)
             {
-                if(debug) printf("state in range  : %f\n", state);
+                if(debug) printf("storage within rating range\n");
 
                 //S = (y_i[1] < 0.0) ? 0.0 : y_i[1];
                 double S = (dam_storage + dam_input < 0.0) ? 0.0 : dam_storage + dam_input;
                 if(debug) printf("storage  : %f\n", S);
 
-                double q2 = qvs->points[state + 1][1];
-                double q1 = qvs->points[state][1];
-                double S2 = qvs->points[state + 1][0];
-                double S1 = qvs->points[state][0];
-                //ans[0] = (q2 - q1) / (S2 - S1) * (S - S1) + q1;
+                //find discharge value in rating
+                unsigned int ii;
+                for (ii = 0; ii < qvs->n_values - 1; ii++){
+				   // if(debug)printf("model403 storage qvs points: %f\n", qvs->points[ii][0]);
+                    if (qvs->points[ii][0] <= S
+						&& S < qvs->points[ii + 1][0])    
+					break;
+                }
+                double q2 = qvs->points[ii + 1][1];
+                double q1 = qvs->points[ii][1];
+                double S2 = qvs->points[ii + 1][0];
+                double S1 = qvs->points[ii][0];
                 dam_outflow = (q2 - q1) / (S2 - S1) * (S - S1) + q1;//m3s-1
                 
             }

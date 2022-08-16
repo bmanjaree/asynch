@@ -3854,22 +3854,16 @@ int ReadInitData(
 
             //state=0; //no dam
             int debug =1;
-            int state = -1;
+            int state = 0;
             if(dam){
+                state=1;
+                return state;
                 unsigned int STATE_DAM_STORAGE=6;//as in model 403
                 double dam_storage = y_0[STATE_DAM_STORAGE];
                 int ii;
                 if(debug)printf("model403 state calc, dam storage: %f\n", dam_storage);
 
-                for (ii = 0; ii < qvs->n_values - 1; ii++){
-				    //if (qvs->points[i][1] <= y_0[0]
-					//	&& y_0[0] < qvs->points[i + 1][1])
-                    if(debug)printf("model403 storage qvs points: %f\n", qvs->points[ii][0]);
-
-                    if (qvs->points[ii][0] <= dam_storage
-						&& dam_storage < qvs->points[ii + 1][0])    
-					break;
-                }
+                
                 if(debug)printf("model403 state calc, iteration: %u\n", ii);
 
                 state= ii;
