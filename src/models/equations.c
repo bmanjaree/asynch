@@ -3110,12 +3110,12 @@ void model403(double t, \
 
             //if(debug) printf("state: %u\n", state);
             unsigned int max_storage_pond_index = (int)qvs->n_values - 1
-            double max_storage_pond = qvs->points[max_storage_pond_index][0]
+            double max_storage_pond = qvs->points[max_storage_pond_index][0];
             if (dam_storage + dam_input >= max_storage_pond)
             {
                 if(debug) printf("storage >= max.sto.pond\n");
                 //S_max = qvs->points[qvs->n_values - 1][0];
-                double q_max = qvs->points[qvs->n_values - 1][1];
+                double q_max = qvs->points[max_storage_pond_index][1];
                 if(debug) printf("qmax : %f\n", q_max);
                 dam_outflow = q_max;//m3s-1
             }
