@@ -3105,18 +3105,25 @@ void model403(double t, \
             //dam_storage= dam_storage + dam_input;
             if(debug) printf("step1 dam storage in m3: %f\n", dam_storage + dam_input);
 
+            if(debug) printf("state: %f\n", state);
+
             if (state == (int)qvs->n_values - 1)
             {
+                if(debug) printf("state eq qvs_nvalues: %f\n", state);
                 //S_max = qvs->points[qvs->n_values - 1][0];
                 double q_max = qvs->points[qvs->n_values - 1][1];
+                if(debug) printf("qmax : %f\n", q_max);
                 dam_outflow = q_max;//m3s-1
                 //ans[0] = dam_outflow;
             }
             else
             {
+                if(debug) printf("state in range  : %f\n", state);
+
                 //S = (y_i[1] < 0.0) ? 0.0 : y_i[1];
                 double S = (dam_storage + dam_input < 0.0) ? 0.0 : dam_storage + dam_input;
-                
+                if(debug) printf("storage  : %f\n", S);
+
                 double q2 = qvs->points[state + 1][1];
                 double q1 = qvs->points[state][1];
                 double S2 = qvs->points[state + 1][0];
