@@ -3856,22 +3856,22 @@ int ReadInitData(
             if(dam){
                 unsigned int STATE_DAM_STORAGE=6;//as in model 403
                 double dam_storage = y_0[STATE_DAM_STORAGE];
-                unsigned int i;
+                unsigned int ii;
                 printf("model403 state calc, dam storage: %f\n", dam_storage);
 
-                for (i = 0; i < qvs->n_values - 1; i++){
+                for (ii = 0; ii < qvs->n_values - 1; ii++){
 				    //if (qvs->points[i][1] <= y_0[0]
 					//	&& y_0[0] < qvs->points[i + 1][1])
-                    printf("model403 storage qvs points: %f\n", qvs->points[i][0]);
+                    printf("model403 storage qvs points: %f\n", qvs->points[ii][0]);
 
-                    if (qvs->points[i][0] <= dam_storage
-						&& dam_storage < qvs->points[i + 1][0])    
+                    if (qvs->points[ii][0] <= dam_storage
+						&& dam_storage < qvs->points[ii + 1][0])    
 					break;
                 }
-                printf("model403 state calc, iteration: %f\n", i);
+                printf("model403 state calc, iteration: %u\n", ii);
 
                 //state= i;
-                return i;
+                return ii;
             }
             else
                 return -1; //no dam
