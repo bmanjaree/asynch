@@ -3089,11 +3089,11 @@ void model403(double t, \
 
         }
         //state is the array index corresponding to the current storage in the qvs 
-        if(state =!0){// dams
+        if(state =-1){// dams
             double dam_input = 0;//m3
             double dam_output=0;//m3
             double dam_outflow=0; //m3s-1
-            int debug = 0;
+            int debug = 1;
             
             if(debug) printf("time: %f\n", t);
             //inflow from upstream links
