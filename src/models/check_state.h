@@ -67,4 +67,5 @@ int dam_check_qvs_403(
     QVSData *qvs,
     bool has_dam,
     void *user);
+    
 #endif //!defined(ASYNCH_MODEL_CHECK_STATE_H)
