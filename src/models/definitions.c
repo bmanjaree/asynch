@@ -3854,10 +3854,11 @@ int ReadInitData(
 
             //state=0; //no dam
             int debug =0;
+            int state = -1;
             if(dam){
                 unsigned int STATE_DAM_STORAGE=6;//as in model 403
                 double dam_storage = y_0[STATE_DAM_STORAGE];
-                unsigned int ii;
+                int ii;
                 if(debug)printf("model403 state calc, dam storage: %f\n", dam_storage);
 
                 for (ii = 0; ii < qvs->n_values - 1; ii++){
@@ -3871,11 +3872,11 @@ int ReadInitData(
                 }
                 if(debug)printf("model403 state calc, iteration: %u\n", ii);
 
-                //state= i;
-                return ii;
+                state= ii;
+                return state;
             }
             else
-                return -1; //no dam
+                return state; //no dam
 	    }     
     else {
 		//If not using algebraic variables, then everything is already set
