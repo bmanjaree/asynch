@@ -3081,7 +3081,7 @@ void model403(double t, \
 	    double invtau = params[3];// 60.0*v_0*pow(A_i, lambda_2) / ((1.0 - lambda_1)*L_i);	//[1/min]  invtau
 	   	double c_2 = params[5];// = A_h / 60.0;	//  c_2
 
-        printf("state: %d\n", state);
+        //printf("state: %d\n", state);
         if(state == -1){ //no dams
             ans[STATE_DISCHARGE] = -q + (out2 + out3 + out4) * c_2; //[m/min] to [m3/s]
 	        for (i = 0; i < num_parents; i++)
@@ -3091,6 +3091,8 @@ void model403(double t, \
         }
         //state is the array index corresponding to the current storage in the qvs 
         if(state =! -1){// dams
+            printf("state: %d\n", state);
+
             double dam_input = 0;//m3
             double dam_output=0;//m3
             double dam_outflow=0; //m3s-1
