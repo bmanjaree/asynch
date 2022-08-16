@@ -3081,7 +3081,7 @@ void model403(double t, \
 	    double invtau = params[3];// 60.0*v_0*pow(A_i, lambda_2) / ((1.0 - lambda_1)*L_i);	//[1/min]  invtau
 	   	double c_2 = params[5];// = A_h / 60.0;	//  c_2
         //the variable state is zero for chanels with no dams
-        if(state==-1){ //no dams
+        if(state == -1){ //no dams
             ans[STATE_DISCHARGE] = -q + (out2 + out3 + out4) * c_2; //[m/min] to [m3/s]
 	        for (i = 0; i < num_parents; i++)
 	            ans[STATE_DISCHARGE] += y_p[i * dim + STATE_DISCHARGE];
