@@ -11,7 +11,7 @@
 #include <models/check_state.h>
 
 
-//Type 40 / 261 / 262
+//Type 40 / 261 / 262 /
 int dam_check_qvs(
     double *y, unsigned int num_dof,
     const double * const params, unsigned int num_params,
@@ -36,15 +36,25 @@ int dam_check_qvs(
     return i;
 }
 
-int dam_check_402(double *y, unsigned int num_dof,
+int dam_check_qvs_403(double *y, unsigned int num_dof,
     const double * const params, unsigned int num_params,
     const double * const global_params, unsigned int num_global_params,
     QVSData *qvs,
     bool has_dam,
     void *user)
     {
-        int out =0;
-        if(has_dam)
-            out=1;
-        return out;
+    unsigned int i, iterations;
+    double S = y[6]; //model 403 storage is state 6
+
+    if (!has_dam)
+        return -1;
+
+    iterations = qvs->n_values - 1;
+    for (i = 0; i<iterations; i++)
+    {
+        if (qvs->points[i][0] <= S && S < qvs->points[i + 1][0])
+            return i;
     }
+
+    return i;
+}
