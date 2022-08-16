@@ -3850,7 +3850,7 @@ int ReadInitData(
 	    }
     else if (model_uid == 403)        //tetis03
 		{
-            printf("model403 state calc\n");
+            //printf("model403 state calc\n");
 
             state=0; //no dam
             if(dam){
