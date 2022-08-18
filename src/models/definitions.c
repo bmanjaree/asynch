@@ -2044,7 +2044,7 @@ void InitRoutines(
 
             }
             link->algebraic = NULL;
-			link->check_state = &NULL;
+			link->check_state = NULL;
             //link->check_state = &dam_check_qvs_403;
 			link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
 		}    
