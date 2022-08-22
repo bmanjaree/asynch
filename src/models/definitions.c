@@ -3830,23 +3830,28 @@ int ReadInitData(
 			y_0[i] = 0.0;
 
 		return 0;
-	} else if (model_uid == 400)        //tetis01
+	} else if (model_uid == 400)        //tetis
 		{
 
 	    } 
-    else if (model_uid == 401)        //tetis02
+    else if (model_uid == 401)        //tetis
 	    {
 
 	    }
-	else if (model_uid == 402)        //tetis03
+	else if (model_uid == 402)        //tetis
 		{
+            unsigned int STATE_STORAGE=6;
             int state=0; //no dam
             if(dam){
+                y_0[STATE_STORAGE] = 0.0;
                 state= 1;
                 return state;
             }
-            else
+            else{
+                y_0[STATE_STORAGE] = y_0[STATE_STORAGE];
                 return state;
+            }
+                
 	    }
     else if (model_uid == 403)        //tetis03
 		{
