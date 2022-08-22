@@ -3838,7 +3838,7 @@ int ReadInitData(
 	    {
 
 	    }
-	else if (model_uid == 402)        //tetis
+	else if (model_uid == 402 || model_uid==403)        //tetis
 		{
             unsigned int STATE_STORAGE=6;
             int state=0; //no dam
@@ -3853,7 +3853,7 @@ int ReadInitData(
             }
                 
 	    }
-    else if (model_uid == 403)        //tetis03
+    /* else if (model_uid == 403)        //tetis03
 		{
             //printf("model403 state calc\n");
 
@@ -3865,7 +3865,7 @@ int ReadInitData(
                 }
             else
                 return state; //no dam
-	    }     
+	    }*/     
     else {
 		//If not using algebraic variables, then everything is already set
 		return 0;

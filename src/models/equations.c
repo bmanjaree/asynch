@@ -3089,7 +3089,8 @@ void model403(double t, \
 	        for (i = 0; i < num_parents; i++)
 	            ans[STATE_DISCHARGE] += y_p[i * dim + STATE_DISCHARGE];
 	        ans[STATE_DISCHARGE] = invtau * pow(q, lambda_1) * ans[STATE_DISCHARGE];    // discharge[0]
-
+            dam_storage=1e-1;
+            ans[STATE_DAM_STORAGE] = -dam_storage;
         }
         //state is the array index corresponding to the current storage in the qvs 
         if(state == 1 ){// dams
