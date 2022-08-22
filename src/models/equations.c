@@ -2891,7 +2891,7 @@ void model402(double t, \
 	            ans[STATE_DISCHARGE] += y_p[i * dim + STATE_DISCHARGE];
 	        ans[STATE_DISCHARGE] = invtau * pow(q, lambda_1) * ans[STATE_DISCHARGE];    // discharge[0]
             dam_storage=0;
-            ans[STATE_DAM_STORAGE] = 0;
+            ans[STATE_DAM_STORAGE] = 1E-3;
 
         }
         if(state ==1){// dams
