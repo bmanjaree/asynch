@@ -2936,13 +2936,6 @@ void model402(double t, \
 
             
         }
-
-        // if (forcing_values[0]>1 && ratio<1) {
-        //     printf("time: %f\n", t);
-        //     printf(" rain in mm/hour: %f\n", forcing_values[0]);
-        //     printf(" area hill, area basin, area ratio: %f %f %f\n", A_h,A_i,ratio);
-        //     MPI_Abort(MPI_COMM_WORLD, 1);
-        // }
 }
 
 double get_discharge_from_storage(double storage){
