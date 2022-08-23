@@ -2857,6 +2857,9 @@ void model402(double t, \
         w = min(1,w); //water can take less than 1 min (dt) to leave surface
         double out2 =0;
         out2  = h2 * w; //direct runoff [m/min]
+        //control surface storage to not become too small. if not, calculation takes longer
+        if(h2<1E-3)
+            h2 = 1E-2;
 		ans[STATE_SURFACE] = d2 - out2; //differential equation of surface storage
 
 
