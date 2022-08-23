@@ -2859,7 +2859,7 @@ void model402(double t, \
         out2  = h2 * w; //direct runoff [m/min]
         //control surface storage to not become too small. if not, calculation takes longer
         if(h2<1E-3)
-            h2 = 1E-2;
+            h2 = 1E-2; // this wont make the model run faster or slower
 		ans[STATE_SURFACE] = d2 - out2; //differential equation of surface storage
 
 
@@ -2893,8 +2893,8 @@ void model402(double t, \
 	        for (i = 0; i < num_parents; i++)
 	            ans[STATE_DISCHARGE] += y_p[i * dim + STATE_DISCHARGE];
 	        ans[STATE_DISCHARGE] = invtau * pow(q, lambda_1) * ans[STATE_DISCHARGE];    // discharge[0]
-            dam_storage=1e-1;
-            ans[STATE_DAM_STORAGE] = -dam_storage;
+            //dam_storage=1e-1; // this is the model making run slower
+            //ans[STATE_DAM_STORAGE] = -dam_storage; // this is the model making run slower
 
         }
         if(state ==1){// dams
