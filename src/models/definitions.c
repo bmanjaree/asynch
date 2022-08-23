@@ -3848,7 +3848,7 @@ int ReadInitData(
                 return state;
             }
             else{
-                y_0[STATE_STORAGE] = 0.0;
+                //y_0[STATE_STORAGE] = 0.0;
                 return state;
             }
                 
