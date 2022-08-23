@@ -3843,7 +3843,7 @@ int ReadInitData(
             unsigned int STATE_STORAGE=6;
             int state=0; //no dam
             if(dam){
-                y_0[STATE_STORAGE] = y_0[STATE_STORAGE];
+                //y_0[STATE_STORAGE] = y_0[STATE_STORAGE];
                 state= 1;
                 return state;
             }
