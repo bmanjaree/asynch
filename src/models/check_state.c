@@ -36,6 +36,26 @@ int dam_check_qvs(
     return i;
 }
 
+int dam_check_qvs_402(double *y, unsigned int num_dof,
+    const double * const params, unsigned int num_params,
+    const double * const global_params, unsigned int num_global_params,
+    QVSData *qvs,
+    bool has_dam,
+    void *user)
+    {
+    //unsigned int i, iterations;
+    //double S = y[6]; //model 402 storage is state 6
+    int debug =1;
+    if(debug) printf("storage in dam_check_qvs_402 : %f\n", S);
+
+    if (!has_dam)
+        return 0;
+    if(has_dam)
+        return 1;
+    
+    
+}
+
 int dam_check_qvs_403(double *y, unsigned int num_dof,
     const double * const params, unsigned int num_params,
     const double * const global_params, unsigned int num_global_params,
