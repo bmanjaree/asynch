@@ -2019,7 +2019,7 @@ void InitRoutines(
             }
             link->algebraic = NULL;
 			link->check_state = &dam_check_qvs_402;
-            link->check_state = NULL;
+            //link->check_state = NULL;
 			link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
 		}
     else if (model_uid == 403) //tetis with individual  dams 

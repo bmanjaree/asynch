@@ -45,7 +45,7 @@ int dam_check_qvs_402(double *y, unsigned int num_dof,
     {
     //unsigned int i, iterations;
     //double S = y[6]; //model 402 storage is state 6
-    int debug =0;
+    int debug =1;
     if(debug) printf("storage in dam_check_qvs_402\n");
 
     if (!has_dam)
