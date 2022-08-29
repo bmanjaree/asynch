@@ -3292,6 +3292,7 @@ void Precalculations(
 //VEC* y_0:		The initial condition vector. Store the initial data here.
 //unsigned int model_uid:	The index of the model.
 //Returns the state of the solution (use 0 if state discontinuities are not a concern). !!!! Should the return value be an int? !!!!
+//This function is only called if the model is initialized with .ini or .uini files.
 int ReadInitData(
     double *global_params, unsigned int num_global_params,
     double *params, unsigned int num_params,
