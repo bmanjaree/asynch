@@ -794,6 +794,19 @@ case 20:	num_global_params = 9;
 		break;
 //--------------------------------------------------------------------------------------------
 
+	case 404://tetis01
+		num_global_params = 1;//none
+		globals->uses_dam = 0;
+		globals->num_params = 16;//ai,lengt,ah,v0,lambda1,lambda2,hu,infil,perc,slope,manning,ressubsurf,resgw,meltf,tempth
+		globals->dam_params_size = 0;
+		globals->area_idx = 0;
+		globals->areah_idx = 2;
+		globals->num_disk_params = 16; //this is how many parameters we read in the prm file
+		globals->convertarea_flag = 0;
+		globals->num_forcings = 5; //precip, et, temperature,soil temperature,discharge
+		globals->min_error_tolerances = 6 //link->dim; //as many as states:static,surface,subsurf,gw,channel,snow,
+		break;
+//--------------------------------------------------------------------------------------------
 	case 2000:
 		num_global_params = 6;
 		globals->uses_dam = 0;
@@ -978,8 +991,14 @@ void ConvertParams(
      model_uid == 259 || model_uid == 260 || model_uid == 261 || model_uid == 262 || model_uid == 263 || 
      model_uid == 264 || model_uid==400 || model_uid==401 || model_uid==402 || model_uid==403)
     {
+        
         params[1] *= 1000;		//L_h: km -> m
         params[2] *= 1e6;		//A_h: km^2 -> m^2
+    }
+    else if(model_uid==404){
+        params[0] *= 1E6;       //area hillslope km2
+        params[1] *= 1000;		//L_h: km -> m
+        params[2] *= 1;		//drainage area: km2
     }
     else if (model_uid == 300 || model_uid == 301)
     {
@@ -2047,7 +2066,28 @@ void InitRoutines(
 			link->check_state = NULL;
             //link->check_state = &dam_check_qvs_403;
 			link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
-		}    
+		}
+    else if (model_uid == 404) //
+			{
+		link->dim = 6;
+		link->no_ini_start = link->dim;
+		link->diff_start = 0;
+
+		link->num_dense = 1;
+		link->dense_indices = (unsigned int*) realloc(link->dense_indices,
+				link->num_dense * sizeof(unsigned int));
+		link->dense_indices[0] = 0;
+		//link->dense_indices[1] = 7;
+
+		if (link->has_res) {
+			link->differential = &TopLayerHillslope_Reservoirs;
+			link->solver = &ForcedSolutionSolver;
+		} else
+			link->differential = &model404;
+		    link->algebraic = NULL;
+		    link->check_state = NULL;
+		    link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
+	}        
 	//else if (model_uid == 300)
 	//{
 	//    link->dim = 2;
@@ -3252,7 +3292,29 @@ void Precalculations(
 		vals[4] = (0.001 / 60.0);		//(mm/hr->m/min)  c_1
 		vals[5] = A_h / 60.0;	//  c_2
 
-	} else if (model_uid == 2000) {
+	} else if (model_uid == 404) //tetis01 model
+		{
+		double* vals = params;
+		double A_h = params[0]; // area of the hillslope
+		double L_i = params[1];	// channel lenght
+		double A_i = params[2]; // drainage area of the hillslope
+		double v_0 = params[3]; //velocity river in channels [m/s]
+		double lambda_1 = params[4]; //power discharge in routing function
+		double lambda_2 = params[5]; //power of area in routing function
+		double Hu = params[6]; //max available storage static storage [mm]
+		double infiltration = params[7]; //infiltration rate [mm/hr]
+		double percolation = params[8]; //percolation rate [mm/hr]
+		double slope = params[9]; //slope [m/m]
+        double manning = params[10]; //mannings
+		double alfa3 = params[11]; //linear reserv. coef gravitational storage [days]
+		double alfa4 = params[12]; //linear reserv. coef aquifer storage [days]
+        double melt_factor = params[13]; // melting factor in mm/hour/degree
+        double temp_thres = params[14]; // in celsius degrees
+		
+
+
+	}
+    else if (model_uid == 2000) {
 		//Order of parameters: L_i,A_h,A_i,h_b,h_H,max_inf_rate,K_sat,S_h,eta,b_H,c_H,d_H,invtau,epsilon,c_1,c_2,c_3,c_4,c_5,c_6
 		//The numbering is:     0   1   2   3   4       5         6    7   8   9   10  11  12    13      14  15  16  17  18  19
 		//Order of global_params: v_r,lambda_1,lambda_2,Q_r,A_r,RC
@@ -3854,6 +3916,10 @@ int ReadInitData(
             }
                 
 	    }
+    else if (model_uid == 404)        //tetis
+	    {
+
+	    }    
     /* else if (model_uid == 403)        //tetis03
 		{
             //printf("model403 state calc\n");
