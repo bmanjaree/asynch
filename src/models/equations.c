@@ -3308,7 +3308,7 @@ void model404(double t, \
         //double alfa2 =global_params[6]; //velocity in m/s
         double slope = params[9];
         double manning = params[10];
-        double alfa2 = (h2^(2/3) * (slope^0.5))/manning; //m/s
+        double alfa2 = (pow(h2,2./3.) * pow(slope,0.5))/manning; //m/s
         double w = alfa2 * L / A_h  * 60; // [1/min]
         w = min(1,w); //water can take less than 1 min (dt) to leave surface
         double out2 =0;
