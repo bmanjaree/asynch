@@ -361,6 +361,7 @@ void Create_River_Network(GlobalVars* globals, Link** system, unsigned int* N, L
             {
                 if (my_rank == 0)
                     printf("Error: Invalid id in topology data (%u).\n", loc_to_children[i][j]);
+                    printf("N: (%u) curr_loc (%u).\n", *N, curr_loc);
                 *N = 0;
                 return;
             }
