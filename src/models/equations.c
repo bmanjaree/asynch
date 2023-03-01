@@ -3987,12 +3987,12 @@ void model406(double t, \
                     const int SIZE1 = 21;
                     double percentage_storage_bins[SIZE1];
                     unsigned int ii;
-                    for(ii=0,i<SIZE1,i++){
+                    for(ii=0;i<SIZE1;i++){
                         percentage_storage_bins[ii] = ii*0.05;
                     }
                     double opening_percentage_bins[SIZE1 - 1] = {0.05, 0.05, 0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.1,0.3,0.3,0.5,0.5,0.7,0.7,0.9,0.9,1};
 
-                    for(ii=0,i<SIZE1-1,i++){
+                    for(ii=0;i<SIZE1-1;i++){
                         if(
                             dam_storage + dam_input > (max_storage_pond * percentage_storage_bins[ii]) 
                             && 
