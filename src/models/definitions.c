@@ -1892,7 +1892,7 @@ void InitRoutines(
         link->dense_indices = (unsigned int*)realloc(link->dense_indices, link->num_dense * sizeof(unsigned int));
         link->dense_indices[0] = 0;
 
-        link->differential = &TopLayerNonlinearExp;
+       // link->differential = &TopLayerNonlinearExp;
         link->algebraic = NULL;
         link->check_state = NULL;
         link->check_consistency = &CheckConsistency_Nonzero_4States;
