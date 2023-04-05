@@ -2766,7 +2766,7 @@ void model401reservoir(double t, const double * const y_i, unsigned int dim, con
 {	
     unsigned int FORCING_RESERVOIR = 4;
     unsigned int STATE_DISCHARGE=0;
-	if(forcing_values[FORCING_RESERVOIR] >0){
+	if(forcing_values[FORCING_RESERVOIR] >=0){
 		ans[STATE_DISCHARGE] = forcing_values[FORCING_RESERVOIR];
 	}
 }
