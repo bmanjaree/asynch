@@ -2025,7 +2025,7 @@ void InitRoutines(
 		//link->dense_indices[1] = 7;
 
 		if (link->has_res) {
-			link->differential = &TopLayerHillslope_Reservoirs;
+			link->differential = &model401reservoir;
 			link->solver = &ForcedSolutionSolver;
 		} else
 			link->differential = &model401;

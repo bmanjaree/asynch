@@ -2762,6 +2762,15 @@ void model401(double t, \
 	        
 	    ans[STATE_DISCHARGE] = invtau * pow(q, lambda_1) * ans[STATE_DISCHARGE];    // discharge[0]
 }
+void model401reservoir(double t, const double * const y_i, unsigned int dim, const double * const y_p, unsigned short num_parents, unsigned int max_dim, const double * const global_params, const double * const params, const double * const forcing_values, const QVSData * const qvs, int state, void* user, double *ans)
+{	
+    unsigned int FORCING_RESERVOIR = 4;
+    unsigned int STATE_DISCHARGE=0;
+	if(forcing_values[FORCING_RESERVOIR] >0){
+		ans[STATE_DISCHARGE] = forcing_values[FORCING_RESERVOIR];
+	}
+}
+
 //Type 402
 void model402(double t, \
 		const double * const y_i, \
