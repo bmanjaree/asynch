@@ -3234,9 +3234,12 @@ void model404(double t, \
 {
 
 	 	unsigned short i; //auxiliary variable for loops
+
+        double c_1 = (0.001 / 60.0);		//(mm/hr->m/min)  c_1
         double A_i = params[0]; //drainage area in km2
 	    double L = params[1];   // Length of the channel [m]
 	    double A_h = params[2]; //Area of the hillslopes [m^2]
+        double c_2 = A_h / 60.0;	//  c_2
         double v_0 = params[3];
         double lambda_1 = params[4];
         double lambda_2 = params[5];
@@ -3253,8 +3256,6 @@ void model404(double t, \
 
         double x1 =0;
 
-        double c_1 = (0.001 / 60.0);		//(mm/hr->m/min)  c_1
-		double c_2 = A_h / 60.0;	//  c_2
 
         //forcings
 	    double rainfall = forcing_values[0] * c_1; //rainfall. from [mm/hr] to [m/min]
