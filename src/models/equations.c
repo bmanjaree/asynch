@@ -3234,15 +3234,23 @@ void model404(double t, \
 {
 
 	 	unsigned short i; //auxiliary variable for loops
-	    double A_h = params[0]; //Area of the hillslopes [m^2]
+        double A_i = params[0]; //drainage area in km2
 	    double L = params[1];   // Length of the channel [m]
-        double A_i = params[2]; //drainage area in km2
+	    double A_h = params[2]; //Area of the hillslopes [m^2]
         double v_0 = params[3];
         double lambda_1 = params[4];
         double lambda_2 = params[5];
+        double Hu = params[6]/1000; //[m]
+        double infiltration = params[7]*c_1; //infiltration rate [m/min]
+		double percolation = params[8]*c_1; // percolation rate to aquifer [m/min]
+        double alfa2 =params[9]; //velocity in m/s
+		double alfa3 = params[10]* 24*60; //residence time [days] to [min].
+		double alfa4 = params[11]* 24*60; //residence time [days] to [min].
+		double melt_factor = params[12] *(1/(24*60.0)) *(1/1000.0); // mm/day/degree to m/min/degree
+        double temp_thres= params[13]; // celsius degrees
         double invtau = 60.0 * v_0 * pow(A_i, lambda_2) / ((1.0 - lambda_1) * L);//[1/min]  invtau params[3]
-		double melt_factor = params[13] *(1/(24*60.0)) *(1/1000.0); // mm/day/degree to m/min/degree
-        double temp_thres= params[14]; // celsius degrees
+
+
         double x1 =0;
 
         double c_1 = (0.001 / 60.0);		//(mm/hr->m/min)  c_1
@@ -3293,7 +3301,7 @@ void model404(double t, \
         
 
 		//static storage
-		double Hu = params[6]/1000; //max available storage in static tank [mm] to [m]
+		 //max available storage in static tank [mm] to [m]
 		double x2 = max(0,x1 + h1 - Hu ); //excedance flow to the second storage [m] [m/min] check units
         //if ground is frozen, x1 goes directly to the surface
         //therefore nothing is diverted to static tank
@@ -3308,16 +3316,16 @@ void model404(double t, \
 
 
 		//surface storage tank
-		double infiltration = params[7]*c_1; //infiltration rate [m/min]
          if(frozen_ground == 1){
             infiltration = 0;
         }
 		double x3 = min(x2, infiltration); //water that infiltrates to gravitational storage [m/min]
 		double d2 = x2 - x3; // the input to surface storage [m] check units
         //double alfa2 =global_params[6]; //velocity in m/s
-        double slope = params[9];
-        double manning = params[10];
-        double alfa2 = (pow(h2,2./3.) * pow(slope,0.5))/manning; //m/s
+        
+        
+        //double alfa2 = (pow(h2,2./3.) * pow(slope,0.5))/manning; //m/s
+
         double w = alfa2 * L / A_h  * 60; // [1/min]
         w = min(1,w); //water can take less than 1 min (dt) to leave surface
         double out2 =0;
@@ -3326,10 +3334,8 @@ void model404(double t, \
 
 
 		// SUBSURFACE storage
-		double percolation = params[8]*c_1; // percolation rate to aquifer [m/min]
 		double x4 = min(x3,percolation); //water that percolates to aquifer storage [m/min]
 		double d3 = x3 - x4; // input to gravitational storage [m/min]
-		double alfa3 = params[11]* 24*60; //residence time [days] to [min].
         double out3=0;
         if(alfa3>=1)
 		    out3 = h3/alfa3; //interflow [m/min]
@@ -3338,7 +3344,6 @@ void model404(double t, \
 		//aquifer storage
 		double x5 = 0;//water loss to deeper aquifer [m]
 		double d4 = x4 - x5;
-		double alfa4 = params[12]* 24*60; //residence time [days] to [min].
         double out4=0;
         if(alfa4>=1)
 		    out4 = h4/alfa4 ; //base flow [m/min]
