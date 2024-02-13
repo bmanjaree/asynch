@@ -797,11 +797,15 @@ case 20:	num_global_params = 9;
 	case 404://tetis01
 		num_global_params = 1;//none
 		globals->uses_dam = 0;
-		globals->num_params = 16;//ai,lengt,ah,v0,lambda1,lambda2,hu,infil,perc,slope,manning,ressubsurf,resgw,meltf,tempth
+		globals->num_params = 14;
+        //1)ai,2)lengt,3)ah,4)v0,5)lambda1,
+        //6)lambda2,7)hu,8)infil,9)perc,
+        //10)vsurf,11)ressubsurf,12)resgw,
+        //13)meltf,14)tempth
 		globals->dam_params_size = 0;
 		globals->area_idx = 0;
 		globals->areah_idx = 2;
-		globals->num_disk_params = 16; //this is how many parameters we read in the prm file
+        globals->num_disk_params = 15; //        
 		globals->convertarea_flag = 0;
 		globals->num_forcings = 5; //precip, et, temperature,soil temperature,discharge
 		globals->min_error_tolerances = 6; //link->dim; //as many as states:static,surface,subsurf,gw,channel,snow,
@@ -1014,9 +1018,8 @@ void ConvertParams(
         params[2] *= 1e6;		//A_h: km^2 -> m^2
     }
     else if(model_uid==404){
-        params[0] *= 1E6;       //area hillslope km2
         params[1] *= 1000;		//L_h: km -> m
-        params[2] *= 1;		//drainage area: km2
+        params[2] *= 1e6;		//A_h: km^2 -> m^2
     }
     else if (model_uid == 300 || model_uid == 301)
     {
@@ -3340,21 +3343,20 @@ void Precalculations(
 	} else if (model_uid == 404) //tetis01 model
 		{
 		double* vals = params;
-		double A_h = params[0]; // area of the hillslope
+		double A_i = params[0]; // //upstream area of the hillslope
 		double L_i = params[1];	// channel lenght
-		double A_i = params[2]; // drainage area of the hillslope
+		double A_h = params[2]; //area of the hillslope
 		double v_0 = params[3]; //velocity river in channels [m/s]
 		double lambda_1 = params[4]; //power discharge in routing function
 		double lambda_2 = params[5]; //power of area in routing function
 		double Hu = params[6]; //max available storage static storage [mm]
 		double infiltration = params[7]; //infiltration rate [mm/hr]
 		double percolation = params[8]; //percolation rate [mm/hr]
-		double slope = params[9]; //slope [m/m]
-        double manning = params[10]; //mannings
-		double alfa3 = params[11]; //linear reserv. coef gravitational storage [days]
-		double alfa4 = params[12]; //linear reserv. coef aquifer storage [days]
-        double melt_factor = params[13]; // melting factor in mm/hour/degree
-        double temp_thres = params[14]; // in celsius degrees
+		double vsurf = params[9]; //surf velocity [m/s]
+		double alfa3 = params[10]; //linear reserv. coef gravitational storage [days]
+		double alfa4 = params[11]; //linear reserv. coef aquifer storage [days]
+        double melt_factor = params[12]; // melting factor in mm/hour/degree
+        double temp_thres = params[13]; // in celsius degrees
 	
 	}
 else if (model_uid == 405) //tetis01 model
